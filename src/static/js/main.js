@@ -29,7 +29,7 @@ function sendMessage(event) {
 const handleSuccess = function (stream) {
     const context = new AudioContext();
     source = context.createMediaStreamSource(stream);
-    processor = context.createScriptProcessor(256, 1, 1);
+    processor = context.createScriptProcessor(4096, 1, 1);
     audiotrack = stream.getAudioTracks()[0];
 
     source.connect(processor);
