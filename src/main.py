@@ -11,6 +11,7 @@ from typing import Optional
 from fastapi import Cookie, Depends, FastAPI, Query, WebSocket, status, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.responses import FileResponse
 
 format = "%(asctime)s: %(message)s"
 logging.basicConfig(format=format, level=logging.DEBUG,
@@ -27,6 +28,11 @@ root = os.path.dirname(__file__)
 app.mount('/static', StaticFiles(directory=os.path.join(root, 'static')), name='static')
 
 templates = Jinja2Templates(directory=os.path.join(root, 'templates'))
+
+
+@app.get('/favicon.ico')
+async def get():
+    return FileResponse(os.path.join(root, 'static', 'favicon.ico'))
 
 
 @app.get("/")
