@@ -84,8 +84,8 @@ async def websocket_endpoint(
     logging.info('websocket.accept')
 
     ctx = multiprocessing.get_context()
-    q = ctx.Queue()
-    process = ctx.Process(target=wav_worker, args=(q, item_id))
+    queue = ctx.Queue()
+    process = ctx.Process(target=wav_worker, args=(queue, item_id))
     process.start()
 
     try:
@@ -100,14 +100,14 @@ async def websocket_endpoint(
                 await websocket.send_text(f"Query parameter q is: {q}")
             await websocket.send_text(f"Message text was: {data}, for item ID: {item_id}")
 
-            q.put(data_bytes)
+            queue.put(data_bytes)
 
     except Exception as e:
         logging.debug(e)
     finally:
         # Wait for the worker to finish
-        q.close()
-        q.join_thread()
+        queue.close()
+        queue.join_thread()
         # use terminate so the while True loop in process will exit
         process.terminate()
         process.join()
