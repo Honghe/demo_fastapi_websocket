@@ -1,4 +1,7 @@
 var ws = null;
+var audiotrack = null;
+var source = null;
+var processor = null;
 
 function connect(event) {
     var itemId = document.getElementById("itemId")
@@ -11,7 +14,8 @@ function connect(event) {
         message.appendChild(content)
         messages.appendChild(message)
     };
-    event.preventDefault()
+    event.preventDefault();
+    console.log('success connect ws');
 }
 
 function sendMessage(event) {
@@ -24,8 +28,9 @@ function sendMessage(event) {
 
 const handleSuccess = function (stream) {
     const context = new AudioContext();
-    const source = context.createMediaStreamSource(stream);
-    const processor = context.createScriptProcessor(1024, 1, 1);
+    source = context.createMediaStreamSource(stream);
+    processor = context.createScriptProcessor(256, 1, 1);
+    audiotrack = stream.getAudioTracks()[0];
 
     source.connect(processor);
     processor.connect(context.destination);
@@ -53,12 +58,43 @@ const handleSuccess = function (stream) {
             const resampledAudioBuffer = e.renderedBuffer;
             console.log(resampledAudioBuffer);
             // convert to  int16 buffer array
-            console.log(floatTo16BitPCM(resampledAudioBuffer.getChannelData(0)))
+            let data = floatTo16BitPCM(resampledAudioBuffer.getChannelData(0));
+            console.log(data)
+            ws.send(data);
         }
         offlineCtx.startRendering();
         source.start(0);
     };
 };
 
-navigator.mediaDevices.getUserMedia({audio: true, video: false})
-    .then(handleSuccess);
+
+document.getElementById('stop').addEventListener('click', function () {
+    if (null != audiotrack) {
+        console.log('audiotrack.stop');
+        audiotrack.stop();
+        audiotrack = null;
+    }
+    if (null != source) {
+        source.disconnect();
+    }
+    if (null != processor) {
+        processor.disconnect();
+    }
+    console.log('stop');
+});
+
+document.getElementById('record').addEventListener('click', function () {
+    navigator.mediaDevices.getUserMedia({
+        audio: {channelCount: 1},
+        video: false
+    })
+        .then(handleSuccess);
+    console.log('record');
+});
+
+document.getElementById('disconnect').addEventListener('click', function () {
+    if (null != ws) {
+        ws.close();
+    }
+    console.log('disconnect');
+});
