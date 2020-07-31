@@ -3,6 +3,7 @@ var audiotrack = null;
 var source = null;
 var processor = null;
 
+var audioElement = document.getElementById('audio')
 function connect(event) {
     var itemId = document.getElementById("itemId")
     var token = document.getElementById("token")
@@ -25,17 +26,22 @@ function sendMessage(event) {
     event.preventDefault()
 }
 
-
+counter = 0
 const handleSuccess = function (stream) {
+    audioElement.srcObject = stream
     const context = new AudioContext();
     source = context.createMediaStreamSource(stream);
-    processor = context.createScriptProcessor(4096, 1, 1);
+    processor = context.createScriptProcessor(2048, 1, 1);
     audiotrack = stream.getAudioTracks()[0];
 
     source.connect(processor);
     processor.connect(context.destination);
 
     processor.onaudioprocess = function (e) {
+        console.log(new Date().getTime() / 1000)
+        console.log('counter ' + counter)
+        counter++
+        audioElement.play()
         // Do something with the data, e.g. convert it to WAV
 
         let sourceAudioBuffer = e.inputBuffer;
@@ -80,15 +86,17 @@ document.getElementById('stop').addEventListener('click', function () {
     if (null != processor) {
         processor.disconnect();
     }
+    console.log('stop time ' + new Date().getTime() / 1000)
     console.log('stop');
 });
 
 document.getElementById('record').addEventListener('click', function () {
     navigator.mediaDevices.getUserMedia({
-        audio: {channelCount: 1},
+        audio: {channelCount: 1, sampleRate: 44100},
         video: false
     })
         .then(handleSuccess);
+    console.log('record time ' + new Date().getTime() / 1000)
     console.log('record');
 });
 

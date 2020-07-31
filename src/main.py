@@ -57,7 +57,7 @@ def wav_worker(q: Queue, uid: str, ):
     filename = os.path.join(root, f'{uid}_{time.time()}.wav')
     try:
         wav = wave.open(filename, mode='wb')
-        wav.setframerate(16000)
+        wav.setframerate(44100)
         wav.setnchannels(1)
         wav.setsampwidth(2)
 
