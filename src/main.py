@@ -8,6 +8,7 @@ from multiprocessing import set_start_method
 from multiprocessing.queues import Queue
 from typing import Optional
 
+import uvicorn
 from fastapi import Cookie, Depends, FastAPI, Query, WebSocket, status, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -113,3 +114,7 @@ async def websocket_endpoint(
         process.join()
 
     logging.info('leave websocket_endpoint')
+
+
+if __name__ == '__main__':
+    uvicorn.run('main:app', reload=True)
