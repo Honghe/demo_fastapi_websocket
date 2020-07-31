@@ -4,6 +4,12 @@
  */
 'use strict';
 
+/*
+This library uses linear interpolation, without any bandlimiting,
+so it is going to introduce aliasing artifacts and may sound quite bad.
+https://stackoverflow.com/questions/27598270/resample-audio-buffer-from-44100-to-16000
+ */
+
 class Resampler {
   constructor(fromSampleRate, toSampleRate, channels, inputBufferSize) {
 
