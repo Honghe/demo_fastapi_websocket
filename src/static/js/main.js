@@ -45,6 +45,8 @@ const handleSuccess = function (stream) {
         // Do something with the data, e.g. convert it to WAV
 
         let sourceAudioBuffer = e.inputBuffer;
+        console.log(sourceAudioBuffer);
+
         // `sourceAudioBuffer` is an AudioBuffer instance of the source audio
         // at the original sample rate.
         const DESIRED_SAMPLE_RATE = 16000;

@@ -57,7 +57,7 @@ def wav_worker(q: Queue, uid: str, ):
     filename = os.path.join(root, f'{uid}_{time.time()}.wav')
     try:
         wav = wave.open(filename, mode='wb')
-        wav.setframerate(44100)
+        wav.setframerate(16000)
         wav.setnchannels(1)
         wav.setsampwidth(2)
 
@@ -88,6 +88,7 @@ async def websocket_endpoint(
     queue = ctx.Queue()
     process = ctx.Process(target=wav_worker, args=(queue, item_id))
     process.start()
+    counter = 0
 
     try:
         while True:
@@ -95,13 +96,14 @@ async def websocket_endpoint(
             data = [int.from_bytes(data_bytes[i:i + 2], byteorder='little', signed=True) for i in
                     range(0, len(data_bytes), 2)]
             await websocket.send_text(
-                f"Session cookie or query token value is: {cookie_or_token}"
+                f"Session cookie or query token value is: {cookie_or_token}. counter {counter}"
             )
             if q is not None:
                 await websocket.send_text(f"Query parameter q is: {q}")
-            await websocket.send_text(f"Message text was: {data}, for item ID: {item_id}")
+            # await websocket.send_text(f"Message text was: {data}, for item ID: {item_id}")
 
             queue.put(data_bytes)
+            counter += 1
 
     except Exception as e:
         logging.debug(e)
@@ -117,4 +119,4 @@ async def websocket_endpoint(
 
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', reload=True)
+    uvicorn.run('main:app', host='0.0.0.0', reload=True)
