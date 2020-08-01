@@ -2,6 +2,12 @@
 Web audio --WebSocket--> FastAPI Server.
 
 ## run
+Use https
+```
+uvicorn src.main:app  --host=0.0.0.0 --reload --ssl-keyfile=./key.pem --ssl-certfile=./cert.pem
+```
+
+Use http
 ```
 uvicorn src.main:app --reload
 ```
@@ -184,6 +190,15 @@ https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API
 
 Audio glitches are caused by an interruption of the normal continuous audio stream, resulting in loud clicks and pops. It is considered to be a catastrophic failure of a multi-media system and MUST be avoided. It can be caused by problems with the threads responsible for delivering the audio stream to the hardware, such as scheduling latencies caused by threads not having the proper priority and time-constraints. It can also be caused by the audio DSP trying to do more work than is possible in real-time given the CPU’s speed.
 
-### The `ScriptProcessorNode` Interface - DEPRECATED
+## The `ScriptProcessorNode` Interface - DEPRECATED
 
 The `ScriptProcessorNode` is constructed with a `bufferSize` which MUST be one of the following values: 256, 512, 1024, 2048, 4096, 8192, 16384. This value controls how frequently the `onaudioprocess` event is dispatched and how many sample-frames need to be processed each call. `onaudioprocess` events are only dispatched if the `ScriptProcessorNode` has at least one input or one output connected. Lower numbers for `bufferSize` will result in a lower (better) [latency](https://webaudio.github.io/web-audio-api/#latency). Higher numbers will be necessary to avoid audio breakup and [glitches](https://webaudio.github.io/web-audio-api/#audio-glitching).
+
+## Use https to develop cross host
+
+Use mkcert to make certificates. mkcert: A simple zero-config tool to make locally trusted development certificates with any names you'd like.
+
+```
+mkcert -key-file key.pem -cert-file cert.pem localhost <host ip>
+```
+
