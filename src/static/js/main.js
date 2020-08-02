@@ -7,7 +7,7 @@ var audioElement = document.getElementById('audio')
 function connect(event) {
     var itemId = document.getElementById("itemId")
     var token = document.getElementById("token")
-    ws = new WebSocket("wss://192.168.31.178:8000/items/" + itemId.value + "/ws?token=" + token.value);
+    ws = new WebSocket("wss://" + window.location.hostname + ":8000/items/" + itemId.value + "/ws?token=" + token.value);
     ws.onmessage = function (event) {
         var messages = document.getElementById('messages')
         var message = document.createElement('li')
@@ -15,6 +15,9 @@ function connect(event) {
         message.appendChild(content)
         messages.appendChild(message)
     };
+    ws.onerror = (ev => {
+        alert(e)
+    });
     event.preventDefault();
     console.log('success connect ws');
 }
