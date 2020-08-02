@@ -202,3 +202,6 @@ Use mkcert to make certificates. mkcert: A simple zero-config tool to make local
 mkcert -key-file key.pem -cert-file cert.pem localhost <host ip>
 ```
 
+## TODO
+
+- [WebSocket WSS (Self Signed Certificate) doesn't work on iOS Safari](https://stackoverflow.com/questions/57723263/secure-websocket-wss-self-signed-certificate-doesnt-work-on-ios-safari)
