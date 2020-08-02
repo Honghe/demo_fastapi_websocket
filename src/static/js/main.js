@@ -44,7 +44,7 @@ const handleSuccess = function (stream) {
         console.log(new Date().getTime() / 1000)
         console.log('counter ' + counter)
         counter++
-        audioElement.play()
+        // audioElement.play()
         // Do something with the data, e.g. convert it to WAV
 
         let sourceAudioBuffer = e.inputBuffer;
