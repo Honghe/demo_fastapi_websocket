@@ -2,12 +2,18 @@
 Web audio --WebSocket--> FastAPI Server.
 
 ## run
-Use https
+### Use https
+
+Use https to use `getUserMedia` cross host.
+
 ```
 uvicorn src.main:app  --host=0.0.0.0 --reload --ssl-keyfile=./key.pem --ssl-certfile=./cert.pem
 ```
 
-Use http
+### Use http
+
+deprecated.
+
 ```
 uvicorn src.main:app --reload
 ```
@@ -196,12 +202,22 @@ The `ScriptProcessorNode` is constructed with a `bufferSize` which MUST be one o
 
 ## Use https to develop cross host
 
-Use mkcert to make certificates. mkcert: A simple zero-config tool to make locally trusted development certificates with any names you'd like.
+Use mkcert to make certificates. 
+
+mkcert: A simple zero-config tool to make locally trusted development certificates with any names you'd like.
 
 ```
 mkcert -key-file key.pem -cert-file cert.pem localhost <host ip>
 ```
 
+## Audio Downsampling
+
+There are several ways to downsample  audio in web:
+
+- OfflineAudioContext (native code, built in downsampling feature), currently used.
+- Web Worker, and use self implementation downsampling method, such JavaScript or WebAssembly code.
+
 ## TODO
 
 - [WebSocket WSS (Self Signed Certificate) doesn't work on iOS Safari](https://stackoverflow.com/questions/57723263/secure-websocket-wss-self-signed-certificate-doesnt-work-on-ios-safari)
+
