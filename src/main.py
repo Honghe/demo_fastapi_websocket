@@ -17,10 +17,6 @@ from starlette.responses import FileResponse
 format = "%(asctime)s: %(message)s"
 logging.basicConfig(format=format, level=logging.DEBUG,
                     datefmt="%H:%M:%S")
-try:
-    set_start_method('spawn')
-except RuntimeError as e:
-    print(e)
 
 app = FastAPI()
 
@@ -119,6 +115,13 @@ async def websocket_endpoint(
 
 
 if __name__ == '__main__':
+    # When using spawn you should guard the part that launches the job in if __name__ == '__main__':.
+    # `set_start_method` should also go there, and everything will run fine.
+    try:
+        set_start_method('spawn')
+    except RuntimeError as e:
+        print(e)
+
     uvicorn.run('main:app', host='0.0.0.0', reload=True, log_level='warning',
                 ssl_keyfile=os.path.join(root, '..', 'key.pem'),
                 ssl_certfile=os.path.join(root, '..', 'cert.pem'))
