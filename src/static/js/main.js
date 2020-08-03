@@ -4,6 +4,10 @@ var source = null;
 var processor = null;
 
 var audioElement = document.getElementById('audio')
+
+
+let buffer = []
+
 function connect(event) {
     var itemId = document.getElementById("itemId")
     var token = document.getElementById("token")
@@ -22,6 +26,18 @@ function connect(event) {
     console.log('success connect ws');
 }
 
+function wsSender() {
+    // 16000(sr) * 2(bytes) = 640 * 2(bytes) * (1000(millisecond) / 40(interval))
+    this.handlerInterval = setInterval(() => {
+        // audio package length 1280 bytes (640 * 2(bytes))
+        var audioData = buffer.splice(0, 640)
+        if (audioData.length > 0) {
+            console.log('ws.send ' + audioData.length)
+            ws.send(floatTo16BitPCM(audioData))
+        }
+    }, 40)
+}
+
 function sendMessage(event) {
     var input = document.getElementById("messageText")
     ws.send(input.value)
@@ -34,7 +50,8 @@ const handleSuccess = function (stream) {
     audioElement.srcObject = stream
     const context = new AudioContext();
     source = context.createMediaStreamSource(stream);
-    processor = context.createScriptProcessor(2048, 1, 1);
+    // createScriptProcessor bufferSize = 0 means let Browser select the best size, e.g. 2048
+    processor = context.createScriptProcessor(0, 1, 1);
     audiotrack = stream.getAudioTracks()[0];
 
     source.connect(processor);
@@ -69,9 +86,7 @@ const handleSuccess = function (stream) {
             const resampledAudioBuffer = e.renderedBuffer;
             console.log(resampledAudioBuffer);
             // convert to  int16 buffer array
-            let data = floatTo16BitPCM(resampledAudioBuffer.getChannelData(0));
-            console.log(data)
-            ws.send(data);
+            buffer.push(...resampledAudioBuffer.getChannelData(0))
         }
         offlineCtx.startRendering();
         source.start(0);
@@ -91,7 +106,11 @@ document.getElementById('stop').addEventListener('click', function () {
     if (null != processor) {
         processor.disconnect();
     }
-    console.log('stop time ' + new Date().getTime() / 1000)
+
+    if (null != this.handlerInterval) {
+        clearInterval(this.handlerInterval)
+    }
+    console.log('stop time ' + new Date().getTime() / 1000);
     console.log('stop');
 });
 
@@ -101,6 +120,12 @@ document.getElementById('record').addEventListener('click', function () {
         video: false
     })
         .then(handleSuccess);
+
+
+    setTimeout(() => {
+        wsSender()
+    }, 40)
+
     console.log('record time ' + new Date().getTime() / 1000)
     console.log('record');
 });
