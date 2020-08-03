@@ -60,7 +60,7 @@ def wav_worker(q: Queue, uid: str, ):
         while True:
             data_bytes = q.get()
             wav.writeframes(data_bytes)
-
+            print(f'q.get {len(data_bytes)}')
 
     except Exception as e:
         logging.debug(e)
@@ -122,6 +122,6 @@ if __name__ == '__main__':
     except RuntimeError as e:
         print(e)
 
-    uvicorn.run('main:app', host='0.0.0.0', reload=True, log_level='warning',
-                ssl_keyfile=os.path.join(root, '..', 'key.pem'),
-                ssl_certfile=os.path.join(root, '..', 'cert.pem'))
+    uvicorn.run('main:app', host='0.0.0.0', reload=True, log_level='debug',
+                ssl_keyfile=os.path.join(root, 'key.pem'),
+                ssl_certfile=os.path.join(root, 'cert.pem'))
