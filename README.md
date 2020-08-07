@@ -221,3 +221,4 @@ There are several ways to downsample  audio in web:
 
 - [WebSocket WSS (Self Signed Certificate) doesn't work on iOS Safari](https://stackoverflow.com/questions/57723263/secure-websocket-wss-self-signed-certificate-doesnt-work-on-ios-safari)
 
+- Sometimes Chrome at Ubuntu 18.04 may became discontinuous (https://stackoverflow.com/questions/54794052/how-can-i-prevent-breakup-choppiness-glitches-when-using-an-audioworklet-to-stre)
