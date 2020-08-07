@@ -30,12 +30,13 @@ function wsSender() {
     // 16000(sr) * 2(bytes) = 640 * 2(bytes) * (1000(millisecond) / 40(interval))
     this.handlerInterval = setInterval(() => {
         // audio package length 1280 bytes (640 * 2(bytes))
+        console.log("buffer len " + buffer.length)
         var audioData = buffer.splice(0, 640)
         if (audioData.length > 0) {
             console.log('ws.send ' + audioData.length)
             ws.send(floatTo16BitPCM(audioData))
         }
-    }, 40)
+    }, 20)  // must less than 40ms
 }
 
 function sendMessage(event) {
